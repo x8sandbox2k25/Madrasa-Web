@@ -7,7 +7,6 @@ const PORT = process.env.PORT || 3000;
 
 // ভিজিটর ট্রাফিক ডেটা সংরক্ষণ
 const trafficData = [];
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -70,4 +69,8 @@ app.get('/api/admin/traffic', requireAuth, (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server executing at http://localhost:${PORT}`);
+});
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
