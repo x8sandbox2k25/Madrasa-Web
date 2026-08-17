@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>মাদ্রাসা অ্যাডমিন ড্যাশবোর্ড</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f8f9fa; margin: 0; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: #1b5e20; color: white; padding: 15px 20px; border-radius: 6px; }
+        .card { background: white; padding: 20px; margin: 20px 0; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; background: white; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 14px; }
+        th { background-color: #f2f2f2; }
+        .btn-logout { background: #d32f2f; color: white; text-decoration: none; padding: 8px 15px; border-radius: 4px; font-weight: bold; }
+        footer { margin-top: 30px; text-align: center; font-size: 13px; color: #666; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>মাদ্রাসা প্রধান ও অ্যাডমিন প্যানেল</h2>
+        <a href="/api/logout" class="btn-logout">লগআউট</a>
+    </div>
+
+    <div class="card">
+        <h3>মোট ভিজিটর সংখ্যা: <span id="totalVisitors">0</span></h3>
+    </div>
+
+    <h3>সর্বশেষ ইউজার ট্রাফিক লগ</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>আইপি (IP)</th>
+                <th>পেজ URL</th>
+                <th>ব্রাউজার ও ডিভাইস</th>
+                <th>সময়</th>
+            </tr>
+        </thead>
+        <tbody id="trafficTable">
+            <tr><td colspan="5" style="text-align: center;">লোডিং হচ্ছে...</td></tr>
+        </tbody>
+    </table>
+
+    <footer>Made by ABID AL HASAN</footer>
+
+    <script>
+        async function fetchTrafficData() {
+            const res = await fetch('/api/admin/traffic');
+            if (res.status === 401) {
+                window.location.href = '/login.html';
+                return;
+            }
+            const data = await res.json();
+            
+            document.getElementById('totalVisitors').innerText = data.totalVisitors;
+            const tbody = document.getElementById('trafficTable');
+            tbody.innerHTML = '';
+
+            data.traffic.forEach((item, idx) => {
+                const row = `<tr>
+                    <td>${idx + 1}</td>
+                    <td>${item.ip}</td>
+                    <td>${item.page}</td>
+                    <td>${item.userAgent}</td>
+                    <td>${item.timestamp}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        fetchTrafficData();
+        setInterval(fetchTrafficData, 5000);
+    </script>
+</body>
+  </html>
